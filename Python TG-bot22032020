@@ -1,0 +1,28 @@
+import telebot
+import pyowm
+from forex_python.converter import CurrencyRates
+
+c = CurrencyRates()
+owm = pyowm.OWM('ef223a8d61fb2a8a03cbd53f7ca86762', language='ru')
+
+observation = owm.weather_at_place('Perm, RU')
+w = observation.get_weather()
+w.get_temperature('celsius')
+bot = telebot.TeleBot("962901302:AAE8VfbaVjm4czFlaXDSt0FhXLkMdAgngGE")
+
+answer = "В Перми нынче "+str(w.get_detailed_status())+", температура "+str(int(w.get_temperature(unit='celsius')['temp']))+ " градусов." +'\n'
+answer += "Гречка стоит " + format(c.get_rate('USD', 'RUB'), '.2f') 
+
+@bot.message_handler(commands=['ei'])
+def perm(message):
+	bot.send_message(message.chat.id, answer)
+
+@bot.message_handler(commands=['cs'])
+def csgo(message):
+	bot.send_message(message.chat.id, str("кто седня в кс??!! @SergeyBatmanov @pozharskyb @dderezzed @LLlyTOB @Dmitriy @IgorNikolaev"))
+
+@bot.message_handler(commands=['help'])
+def help(message):
+	bot.send_animation(message.chat.id, "https://memepedia.ru/wp-content/uploads/2017/04/61092-YzljOWQ3ZWQ2YQ.gif")
+	
+bot.polling(none_stop = True)
